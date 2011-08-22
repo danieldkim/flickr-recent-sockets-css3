@@ -1,0 +1,43 @@
+script
+  var socket = io.connect();
+  socket.on('new photos', function (urls) {
+    var recentImgs = $('#recent-imgs')[0];
+    var imgs = $('img', recentImgs);
+    if (imgs.length < 1) {
+      var imgsHtml = ""
+      _.each(urls, function(url, i) {
+        imgsHtml += sprintf('<img height="200" class="new" src="%s"/>', urls[i]);
+      })
+      recentImgs.innerHTML = imgsHtml;
+    } else {
+      var imgs = $('#recent-imgs img');
+      imgs.each(function(i) {
+        var img = this;
+        setTimeout(function() {
+          img.className = "old";
+          img.src = urls[i];
+          setTimeout(function() {
+            img.className = 'new';
+          }, 500);
+        }, i * 500)
+      });
+    }
+  });
+style
+  #recent-imgs img {
+    margin: 40px;
+    -webkit-transition: all .5s ease-in-out;
+  }
+
+  #recent-imgs img.new {
+    opacity:1;
+    -webkit-transform:scale(1,1);
+    -webkit-transform-origin: top right;
+  }
+
+  #recent-imgs img.old {
+    -webkit-transform:scale(0,0);
+    -webkit-transform-origin: bottom left;
+  }
+#recent-imgs
+  h1 Hold on getting recent flickr photos ...
